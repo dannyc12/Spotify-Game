@@ -1,10 +1,42 @@
-<div *ngIf="authLoading || configLoading">Loading...</div>
-<div *ngIf="!authLoading && !configLoading">
-  Genre:
-  <select [(ngModel)]="selectedGenre" (ngModelChange)="setGenre($event)">
-    <option [value]=""></option>
-    <option [value]="genre" *ngFor="let genre of genres">
-      {{ genre }}
-    </option>
-  </select>
+<!-- Make the title part of the header later -->
+<div class="body">
+
+  <div class="container">
+    <h1>Who's Who</h1>
+  </div>
+
+  <div *ngIf="authLoading || configLoading">Loading...</div>
+  <div *ngIf="!authLoading && !configLoading" class="container">
+    <div class="block">
+      <label for="genre">Select a Genre:</label>
+      <select [(ngModel)]="selectedGenre" (ngModelChange)="setGenre($event)">
+        <option [value]=""></option>
+        <option [value]="genre" *ngFor="let genre of genres">
+          {{ genre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="block">
+      <label for="numSongs">Select Number of Songs:</label>
+      <select id="numbSongs" name="numSongs">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+    </div>
+
+    <div class="block">
+      <label for="numArtists">Select Number of Artists Per Question:</label>
+      <select id="numArtists" name="numArtists">
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+    </div>
+
+    <button class="startButton">Start Game</button>
+
+
+  </div>
 </div>
