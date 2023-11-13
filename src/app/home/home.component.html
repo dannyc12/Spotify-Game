@@ -19,7 +19,7 @@
 
     <div class="block">
       <label for="numSongs">Select Number of Songs:</label>
-      <select id="numbSongs" name="numSongs">
+      <select [(ngModel)]="numberOfSongs" name="numSongs" (ngModelChange)="setNumberOfSongs($event)">
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -28,14 +28,14 @@
 
     <div class="block">
       <label for="numArtists">Select Number of Artists Per Question:</label>
-      <select id="numArtists" name="numArtists">
+      <select [(ngModel)]="numberOfArtists" name="numArtists" (ngModelChange)="setNumberOfArtists($event)">
         <option value="2">2</option>
         <option value="3">3</option>
         <option value="4">4</option>
       </select>
     </div>
 
-    <button class="startButton">Start Game</button>
+    <button class="startButton" (click)="getTracks()">Start Game</button>
 
 
   </div>
