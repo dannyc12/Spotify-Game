@@ -1,0 +1,13 @@
+<h1>GAME PAGE</h1>
+<!-- <figure>
+    <button (click)="playAudio()">Play</button>
+</figure> -->
+<figure>
+    <audio controls [src]="track.preview_url"></audio>
+</figure>
+<app-artist-card *ngFor="let artist of artistOptions" [artist]="artist" id="{{ artist.id }}" (click)="select(artist.id)" [selectedArtistId]="selectedArtistId"></app-artist-card>
+<br />
+<button (click)="submitAnswer()">Submit Answer</button>
+<p>Guesses remaining: {{ guesses }}</p>
+
+<!-- <script src="../../../node_modules/howler/src/howler.core.js"></script> -->
