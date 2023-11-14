@@ -1,5 +1,5 @@
 export default interface Artist {
-    id: string,
+    id: string;
     name: string,
     imgUrl: string,
 }
