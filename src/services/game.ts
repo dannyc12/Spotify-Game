@@ -15,6 +15,7 @@ export class GameService {
         selectedGenre: undefined,
         numberOfTracks: 1,
         numberOfArtists: 2,
+        difficulty: 'easy'
     };
 
     setGameConfiguration(state: any) {

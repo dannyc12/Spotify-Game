@@ -35,6 +35,14 @@
       </select>
     </div>
 
+    <div class="block">
+      <label for="difficulty">Choose Your Difficulty:</label>
+      <select [(ngModel)]="difficulty" required name="difficulty" (ngModelChange)="setDifficulty($event)">
+        <option value="easy">Easy</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
+
     <button class="startButton" [disabled]="!(selectedGenre && numberOfTracks && numberOfArtists)"
      [ngClass]="!(selectedGenre && numberOfTracks && numberOfArtists) ? 'disabled' : 'enabled'" (click)="startGame()">Start Game</button>
 

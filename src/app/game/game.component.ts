@@ -34,6 +34,7 @@ export class GameComponent implements OnInit {
   totalArtistOptions: number = 3;
   totalQuestions: number = 3;
   genre: string = "rock"
+  difficulty = this.gameData.getGameConfiguration().difficulty;
 
   constructor(private gameData: GameService, private router: Router, private renderer: Renderer2) { }
 

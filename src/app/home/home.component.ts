@@ -24,22 +24,7 @@ export class HomeComponent implements OnInit {
   token: String = "";
   numberOfTracks: number = this.gameService.getGameConfiguration().numberOfTracks;
   numberOfArtists: number = this.gameService.getGameConfiguration().numberOfArtists;
-
-  // MOCK RESPONSE
-  // mockResponse = {
-  //   "artists": [
-  //     {
-  //       "images: [
-  //         {
-  //           "url": "https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228",
-  //           "height": 300,
-  //           "width": 300
-  //         }
-  //       ],
-
-  //     }
-  //   ]
-  // }
+  difficulty: string = this.gameService.getGameConfiguration().difficulty;
 
   ngOnInit(): void {
     this.authLoading = true;
@@ -80,27 +65,13 @@ export class HomeComponent implements OnInit {
     this.configLoading = false;
   };
 
-  // // NEEDS TESTING
-  // async getTracks() {
-  //   console.log("trying to get tracks...")
-  //   const customParams = {'seed_genres': this.selectedGenre, 'limit': this.numberOfTracks}
-  //   const response = await fetchFromSpotify({
-  //     token: this.token,
-  //     endpoint: "recommendations/",
-  //     params: customParams
-  //   });
-  //   console.log("Tracks:  " + JSON.stringify(response))
-  //   console.log(response.tracks[0])
-  //   console.log(response.tracks[1])
-  //   this.mapResponseToTracks(response.tracks[0])
-  // }
-
   startGame() {
     // save the state before routing to game component
     this.gameService.setGameConfiguration({
       genre: this.selectedGenre,
       numberOfTracks: this.numberOfTracks,
-      numberOfArtists: this.numberOfArtists
+      numberOfArtists: this.numberOfArtists,
+      difficulty: this.difficulty
     });
     // user router here to ensure that our state is saved BEFORE we move to the game component
     console.log(`saved state: ${JSON.stringify(this.gameService.getGameConfiguration())}`)
@@ -121,6 +92,11 @@ export class HomeComponent implements OnInit {
   setNumberOfArtists(selectedNumber: number) {
     this.numberOfArtists = selectedNumber;
     console.log("User chose " + this.numberOfArtists + " artists per question.")
+  }
+
+  setDifficulty(selectedDifficulty: string) {
+    this.difficulty = selectedDifficulty;
+    console.log("User chose difficulty: " + this.difficulty)
   }
 
   // NEEDS TESTING
