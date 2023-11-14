@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import fetchFromSpotify, { request } from "../../services/api";
-import Song from "../models/song";
+import Track from "../models/track";
 import Artist from "../models/artist";
 
 const AUTH_ENDPOINT =
@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit {
   authLoading: boolean = false;
   configLoading: boolean = false;
   token: String = "";
-  numberOfSongs: number = 1;
+  numberOfTracks: number = 1;
   numberOfArtists: number = 2;
 
   ngOnInit(): void {
@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit {
 
   async getTracks() {
     console.log("trying to get tracks...")
-    const customParams = {'seed_genres': this.selectedGenre, 'limit': this.numberOfSongs}
+    const customParams = {'seed_genres': this.selectedGenre, 'limit': this.numberOfTracks}
     const response = await fetchFromSpotify({
       token: this.token,
       endpoint: "recommendations/",
@@ -73,7 +73,7 @@ export class HomeComponent implements OnInit {
     console.log("Tracks:  " + JSON.stringify(response))
     console.log(response.tracks[0])
     console.log(response.tracks[1])
-    this.mapResponseToSongs(response.tracks[0])
+    this.mapResponseToTracks(response.tracks[0])
   }
 
   setGenre(selectedGenre: any) {
@@ -82,9 +82,9 @@ export class HomeComponent implements OnInit {
     console.log(TOKEN_KEY);
   }
 
-  setNumberOfSongs(selectedNumber: any) {
-    this.numberOfSongs = selectedNumber;
-    console.log("User chose " + this.numberOfSongs + " songs.")
+  setNumberOfTracks(selectedNumber: any) {
+    this.numberOfTracks = selectedNumber;
+    console.log("User chose " + this.numberOfTracks + " tracks.")
   }
 
   setNumberOfArtists(selectedNumber: any) {
@@ -92,21 +92,22 @@ export class HomeComponent implements OnInit {
     console.log("User chose " + this.numberOfArtists + " artists per question.")
   }
 
-  mapResponseToSongs(trackResponse: any): Song {
-    let songArtist: Artist = {
+  mapResponseToTracks(trackResponse: any): Track {
+    let trackArtist: Artist = {
+      id: trackResponse.artists[0].id,
       name: trackResponse.artists[0].name,
       imgUrl: trackResponse.artists[0].images[0].url
     }
-    let newSong: Song = {
+    let newTrack: Track = {
+      id: trackResponse.id,
       name: trackResponse.name,
-      artist: songArtist,
       previewUrl: trackResponse.preview_url,
       detailsUrl: trackResponse.href
     }
-    for (let key in newSong) {
+    for (let key in newTrack) {
       console.log(`${key}: ${key.valueOf}`)
     }
-    return newSong;
+    return newTrack;
   }
 
   

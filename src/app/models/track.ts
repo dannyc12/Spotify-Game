@@ -1,10 +1,8 @@
 import Artist from "./artist";
 
-export default interface Song {
+export default interface Track {
+    id: string,
     name: string,
-    artist: Artist,
     previewUrl: string,
     detailsUrl: string
-
-
 }

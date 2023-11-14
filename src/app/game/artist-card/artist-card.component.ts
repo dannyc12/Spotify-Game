@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import Artist from 'src/app/models/artist';
 
 @Component({
   selector: 'app-artist-card',
@@ -7,7 +8,7 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class ArtistCardComponent implements OnInit {
 
-  @Input() artist: any;
+  @Input() artist: Artist | undefined;
   @Input() selectedArtistId: string = "";
 
   constructor() { }
