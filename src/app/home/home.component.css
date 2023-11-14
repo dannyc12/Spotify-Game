@@ -34,6 +34,16 @@ body {
     margin-top: 25px;
   }
 
-  .startButton:hover {
+  .enabled {
+    
+  }
+
+  .enabled:hover {
     background-color: #45a049;
   }
+
+  .disabled {
+    background-color: #555;
+    color: white;
+    cursor: default;
+   }

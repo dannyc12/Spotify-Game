@@ -9,7 +9,7 @@
   <div *ngIf="!authLoading && !configLoading" class="container">
     <div class="block">
       <label for="genre">Select a Genre:</label>
-      <select [(ngModel)]="selectedGenre" (ngModelChange)="setGenre($event)">
+      <select [(ngModel)]="selectedGenre" required (ngModelChange)="setGenre($event)">
         <option [value]=""></option>
         <option [value]="genre" *ngFor="let genre of genres">
           {{ genre }}
@@ -18,8 +18,8 @@
     </div>
 
     <div class="block">
-      <label for="numSongs">Select Number of Songs:</label>
-      <select [(ngModel)]="numberOfSongs" name="numSongs" (ngModelChange)="setNumberOfSongs($event)">
+      <label for="numTracks">Select Number of Tracks:</label>
+      <select [(ngModel)]="numberOfTracks" required name="numTracks" (ngModelChange)="setNumberOfTracks($event)">
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -28,14 +28,15 @@
 
     <div class="block">
       <label for="numArtists">Select Number of Artists Per Question:</label>
-      <select [(ngModel)]="numberOfArtists" name="numArtists" (ngModelChange)="setNumberOfArtists($event)">
+      <select [(ngModel)]="numberOfArtists" required name="numArtists" (ngModelChange)="setNumberOfArtists($event)">
         <option value="2">2</option>
         <option value="3">3</option>
         <option value="4">4</option>
       </select>
     </div>
 
-    <button class="startButton" (click)="getTracks()">Start Game</button>
+    <button class="startButton" [disabled]="!(selectedGenre && numberOfTracks && numberOfArtists)"
+     [ngClass]="!(selectedGenre && numberOfTracks && numberOfArtists) ? 'disabled' : 'enabled'" (click)="startGame()">Start Game</button>
 
 
   </div>
