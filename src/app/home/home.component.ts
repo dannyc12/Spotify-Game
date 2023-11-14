@@ -26,9 +26,12 @@ export class HomeComponent implements OnInit {
   numberOfArtists: number = this.gameService.getGameConfiguration().numberOfArtists;
   difficulty: string = this.gameService.getGameConfiguration().difficulty;
 
+  trackOptions: number[] = [1,2,3];
+
   ngOnInit(): void {
     this.authLoading = true;
     const storedTokenString = localStorage.getItem(TOKEN_KEY);
+    console.log("game configuration at init: " + JSON.stringify(this.gameService.getGameConfiguration()));
     if (storedTokenString) {
       console.log("Stored token string: " + storedTokenString)
       const storedToken = JSON.parse(storedTokenString);

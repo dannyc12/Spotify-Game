@@ -150,7 +150,7 @@ export class GameComponent implements OnInit {
         popup.style.display = 'none';
         this.newGame();
       } else {
-        if (this.currentQuestion == this.totalQuestions && this.correct) {
+        if (this.currentQuestion === this.totalQuestions && this.correct) {
           message.innerText = "You win!"
         } else {
           message.innerText = "Game Over"
@@ -200,6 +200,8 @@ export class GameComponent implements OnInit {
   }
 
   results() {
+    console.log("current quesiton: " + this.currentQuestion)
+    console.log("number of questions: " + this.totalQuestions)
     if (this.guesses <= 0) {
       console.log("lose");
       // lose popup
@@ -207,7 +209,7 @@ export class GameComponent implements OnInit {
       this.gameData.updateCurrentQuestion(1);
       this.gameData.updateGuesses(4);
     }
-    else if (this.currentQuestion == this.totalQuestions && this.correct) {
+    else if (this.currentQuestion === this.totalQuestions && this.correct) {
       console.log("win")
       // win popup
       this.togglePopup();
