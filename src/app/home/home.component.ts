@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import fetchFromSpotify, { request } from "../../services/api";
 import Track from "../models/track";
 import Artist from "../models/artist";
-import { GameService } from "src/services/game.service";
+import { GameService } from "src/services/game";
 import { Router } from "@angular/router";
 
 const AUTH_ENDPOINT =
@@ -18,12 +18,12 @@ export class HomeComponent implements OnInit {
   constructor(private gameService: GameService, private router: Router) {}
 
   genres: String[] = ["House", "Alternative", "J-Rock", "R&B"];
-  selectedGenre: String = "";
+  selectedGenre: String = this.gameService.getGameConfiguration().genre;
   authLoading: boolean = false;
   configLoading: boolean = false;
   token: String = "";
-  numberOfTracks: number = 1;
-  numberOfArtists: number = 2;
+  numberOfTracks: number = this.gameService.getGameConfiguration().numberOfTracks;
+  numberOfArtists: number = this.gameService.getGameConfiguration().numberOfArtists;
 
   // MOCK RESPONSE
   // mockResponse = {
@@ -97,28 +97,28 @@ export class HomeComponent implements OnInit {
 
   startGame() {
     // save the state before routing to game component
-    this.gameService.setGameState({
+    this.gameService.setGameConfiguration({
       genre: this.selectedGenre,
       numberOfTracks: this.numberOfTracks,
       numberOfArtists: this.numberOfArtists
     });
     // user router here to ensure that our state is saved BEFORE we move to the game component
-    console.log(`saved state: ${JSON.stringify(this.gameService.getGameState())}`)
-    // this.router.navigate(['/game']);
+    console.log(`saved state: ${JSON.stringify(this.gameService.getGameConfiguration())}`)
+    this.router.navigate(['/game']);
   }
 
-  setGenre(selectedGenre: any) {
+  setGenre(selectedGenre: string) {
     this.selectedGenre = selectedGenre;
     console.log(this.selectedGenre);
     console.log(TOKEN_KEY);
   }
 
-  setNumberOfTracks(selectedNumber: any) {
+  setNumberOfTracks(selectedNumber: number) {
     this.numberOfTracks = selectedNumber;
     console.log("User chose " + this.numberOfTracks + " Tracks.")
   }
 
-  setNumberOfArtists(selectedNumber: any) {
+  setNumberOfArtists(selectedNumber: number) {
     this.numberOfArtists = selectedNumber;
     console.log("User chose " + this.numberOfArtists + " artists per question.")
   }
