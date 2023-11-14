@@ -7,13 +7,19 @@ import { AppComponent } from "./app.component";
 import { HomeComponent } from "./home/home.component";
 import { GameComponent } from './game/game.component';
 import { ArtistCardComponent } from './game/artist-card/artist-card.component';
+import { GameService } from "src/services/game.service";
 
-const routes: Routes = [{ path: "", component: HomeComponent }];
+const routes: Routes = [
+  { path: 'home', component: HomeComponent },
+  { path: 'game', component: GameComponent },
+  { path: '', component: HomeComponent },
+  { path: '**', redirectTo: '/home', pathMatch: 'full' },
+];
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, GameComponent, ArtistCardComponent],
   imports: [BrowserModule, FormsModule, RouterModule.forRoot(routes)],
-  providers: [],
+  providers: [GameService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
