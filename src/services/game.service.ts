@@ -14,6 +14,14 @@ export class GameService {
     this.gameState = state;
   }
 
+  resetGameState(state: any) {
+    this.gameState = {
+      selectedGenre: undefined,
+      numberOfTracks: 1,
+      numberOfArtists: 2
+    }
+  }
+
   getGameState() {
     return this.gameState;
   }
