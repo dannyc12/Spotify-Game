@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import fetchFromSpotify, { request } from "../../services/api";
 import Track from '../models/track';
 import Artist from '../models/artist';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { GameService } from 'src/services/game';
 
 const AUTH_ENDPOINT =
@@ -16,10 +16,14 @@ const TOKEN_KEY = "whos-who-access-token";
 })
 export class GameComponent implements OnInit {
 
+  @ViewChild('overlay', { static: false }) overlay!: ElementRef;
+  @ViewChild('popup', { static: false }) popup!: ElementRef;
+  @ViewChild('message', { static: false }) message!: ElementRef;
+
   @Input() artistOptions: Artist[] = [];
   @Input() track: Track | undefined;
   @Input() guesses: number = 2;
-  currentQuestion: number = 1;
+  @Input() currentQuestion: number = 1;
 
   authLoading: boolean = false;
   gameLoading: boolean = false;
@@ -31,7 +35,7 @@ export class GameComponent implements OnInit {
   totalQuestions: number = 3;
   genre: string = "rock"
 
-  constructor(private gameData: GameService, private router: Router, private activatedRoute: ActivatedRoute) { }
+  constructor(private gameData: GameService, private router: Router, private renderer: Renderer2) { }
 
   ngOnInit(): void {
     this.gameData.currentQuestion.subscribe(currentQuestion => this.currentQuestion = currentQuestion);
@@ -100,11 +104,9 @@ export class GameComponent implements OnInit {
       imgUrl: response.images[0].url
     })
 
-    // get random artists to match totalArtistOptions
-    // shuffle artists
     const responseTwo = await fetchFromSpotify({
       token: t,
-      endpoint: `search?q=genre:${this.genre}&type=artist`,
+      endpoint: `search?q=genre:${this.genre}&type=artist&limit=50`,
     });
     console.log(responseTwo);
     while (this.artistOptions.length < this.totalArtistOptions) {
@@ -135,16 +137,42 @@ export class GameComponent implements OnInit {
   togglePopup() {
     const overlay = document.getElementById('overlay');
     const popup = document.getElementById('popup');
+    const message = document.getElementById('message');
 
-    if (overlay && popup) {
+    if (overlay && popup && message) {
       if (overlay.style.display === 'block') {
         overlay.style.display = 'none';
         popup.style.display = 'none';
+        this.newGame();
       } else {
+        if (this.currentQuestion === this.totalQuestions && this.correct) {
+          message.innerText = "You win!"
+        } else {
+          message.innerText = "Game Over"
+        }
         overlay.style.display = 'block';
         popup.style.display = 'block';
       }
     }
+
+    // if (this.overlay && this.popup && this.message) {
+    //   const overlayDisplayStyle = window.getComputedStyle(this.overlay.nativeElement).getPropertyValue('display');
+    //   console.log(overlayDisplayStyle);
+    //   if (overlayDisplayStyle === 'block') {
+    //     this.renderer.setStyle(this.overlay.nativeElement, 'display', 'none');
+    //     this.renderer.setStyle(this.popup.nativeElement, 'display', 'none');
+    //     this.newGame();
+    //   } else {
+    //     if (this.currentQuestion === this.totalQuestions && this.correct) {
+    //       this.renderer.setProperty(this.message.nativeElement, 'innerText', 'You win!');
+    //     } else {
+    //       this.renderer.setProperty(this.message.nativeElement, 'innerText', 'Game Over');
+    //     }
+    //     console.log("popup should show")
+    //     this.renderer.setStyle(this.overlay.nativeElement, 'display', 'block');
+    //     this.renderer.setStyle(this.popup.nativeElement, 'display', 'block');
+    //   }
+    // }
   }
 
   select(id: string) {
@@ -172,7 +200,7 @@ export class GameComponent implements OnInit {
       // lose popup
       this.togglePopup();
     }
-    else if (this.currentQuestion === this.totalQuestions && this.guesses > 0) {
+    else if (this.currentQuestion === this.totalQuestions && this.correct) {
       console.log("win")
       // win popup
       this.togglePopup();
@@ -180,10 +208,14 @@ export class GameComponent implements OnInit {
     else if (this.correct) {
       this.gameData.updateCurrentQuestion(this.currentQuestion + 1);
       this.gameData.updateGuesses(this.guesses);
-      this.router.routeReuseStrategy.shouldReuseRoute = function() {
+      this.router.routeReuseStrategy.shouldReuseRoute = function () {
         return false;
       }
       this.router.navigateByUrl('/game');
     }
+  }
+
+  newGame() {
+    this.router.navigateByUrl('/');
   }
 }
