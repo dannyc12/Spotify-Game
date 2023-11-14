@@ -1,6 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, Renderer2, ViewChild } from '@angular/core';
 import fetchFromSpotify, { request } from "../../services/api";
-import * as Howl from 'howler';
+import Track from '../models/track';
+import Artist from '../models/artist';
+import { Router } from '@angular/router';
+import { GameService } from 'src/services/game';
 
 const AUTH_ENDPOINT =
   "https://nuod0t2zoe.execute-api.us-east-2.amazonaws.com/FT-Classroom/spotify-auth-token";
@@ -13,26 +16,31 @@ const TOKEN_KEY = "whos-who-access-token";
 })
 export class GameComponent implements OnInit {
 
-  @Input() artistOptions: Set<any> = new Set();
+  @ViewChild('overlay', { static: false }) overlay!: ElementRef;
+  @ViewChild('popup', { static: false }) popup!: ElementRef;
+  @ViewChild('message', { static: false }) message!: ElementRef;
+
+  @Input() artistOptions: Artist[] = [];
+  @Input() track: Track | undefined;
   @Input() guesses: number = 2;
   @Input() currentQuestion: number = 1;
-  @Input() track: any | undefined;
 
   authLoading: boolean = false;
   gameLoading: boolean = false;
   correctArtistId: string = "";
-  selectedArtistId: string= "";
+  selectedArtistId: string = "";
   token: String = "";
   correct: boolean | undefined = undefined;
   totalArtistOptions: number = 3;
   totalQuestions: number = 3;
   genre: string = "rock"
 
-  sound: Howl.Howl | undefined;
-
-  constructor() { }
+  constructor(private gameData: GameService, private router: Router, private renderer: Renderer2) { }
 
   ngOnInit(): void {
+    this.gameData.currentQuestion.subscribe(currentQuestion => this.currentQuestion = currentQuestion);
+    this.gameData.guesses.subscribe(guesses => this.guesses = guesses);
+
     this.authLoading = true;
     const storedTokenString = localStorage.getItem(TOKEN_KEY);
     if (storedTokenString) {
@@ -60,71 +68,154 @@ export class GameComponent implements OnInit {
 
   getTrack = async (t: any) => {
     this.gameLoading = true;
-    while (!this.track || !this.track.preview_url) {
+
+    while (!this.track || !this.track.previewUrl) {
       const response = await fetchFromSpotify({
         token: t,
-        endpoint: `search?q=genre:${this.genre}&type=track`,
+        endpoint: `search?q=genre:${this.genre}&type=track&limit=50`,
       });
-      this.track = response.tracks.items[Math.floor(Math.random() * response.tracks.items.length)];
+      let newTrack: any = response.tracks.items[Math.floor(Math.random() * response.tracks.items.length)];
+      if (!newTrack.preview_url) {
+        continue;
+      }
+      console.log(newTrack.artists)
+      this.track = {
+        id: newTrack.id,
+        name: newTrack.name,
+        previewUrl: newTrack.preview_url,
+        detailsUrl: newTrack.href
+      }
+      this.correctArtistId = newTrack.artists[0].id;
+      break;
     }
+
     this.getArtistOptions(t);
   };
 
   getArtistOptions = async (t: any) => {
     console.log(this.track)
-    this.sound = new Howl.Howl({
-      src: [this.track.preview_url],
-      volume: 0.5,
-      preload: true
-    });
-    this.correctArtistId = this.track.artists[0].id;
     const response = await fetchFromSpotify({
       token: t,
       endpoint: `artists/${this.correctArtistId}`,
     });
-    this.artistOptions.add(response)
+    this.artistOptions.push({
+      id: response.id,
+      name: response.name,
+      imgUrl: response.images[0].url
+    })
 
-    // get random artists to match totalArtistOptions
-    // shuffle artists
     const responseTwo = await fetchFromSpotify({
       token: t,
-      endpoint: `search?q=genre:${this.genre}&type=artist`,
+      endpoint: `search?q=genre:${this.genre}&type=artist&limit=50`,
     });
     console.log(responseTwo);
-    while (this.artistOptions.size < this.totalArtistOptions) {
+    while (this.artistOptions.length < this.totalArtistOptions) {
       let option: any = responseTwo.artists.items[Math.floor(Math.random() * responseTwo.artists.items.length)]
-      this.artistOptions.add(option);
+      if (!this.artistOptions.some((artist) => artist.id === option.id)) {
+        this.artistOptions.push({
+          id: option.id,
+          name: option.name,
+          imgUrl: option.images[0].url
+        });
+      }
     }
 
     this.artistOptions = this.shuffle(this.artistOptions);
     this.gameLoading = false;
   }
 
-  shuffle(options: Set<any>) {
-    const arrayFromSet = Array.from(options);
-    for (let i = arrayFromSet.length - 1; i > 0; i--) {
+  shuffle(options: Artist[]) {
+    let shuffledOptions: Artist[] = options;
+    for (let i = shuffledOptions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [arrayFromSet[i], arrayFromSet[j]] = [arrayFromSet[j], arrayFromSet[i]];
+      [shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
     }
 
-    return new Set(arrayFromSet);
+    return shuffledOptions;
+  }
+
+  togglePopup() {
+    const overlay = document.getElementById('overlay');
+    const popup = document.getElementById('popup');
+    const message = document.getElementById('message');
+
+    if (overlay && popup && message) {
+      if (overlay.style.display === 'block') {
+        overlay.style.display = 'none';
+        popup.style.display = 'none';
+        this.newGame();
+      } else {
+        if (this.currentQuestion === this.totalQuestions && this.correct) {
+          message.innerText = "You win!"
+        } else {
+          message.innerText = "Game Over"
+        }
+        overlay.style.display = 'block';
+        popup.style.display = 'block';
+      }
+    }
+
+    // if (this.overlay && this.popup && this.message) {
+    //   const overlayDisplayStyle = window.getComputedStyle(this.overlay.nativeElement).getPropertyValue('display');
+    //   console.log(overlayDisplayStyle);
+    //   if (overlayDisplayStyle === 'block') {
+    //     this.renderer.setStyle(this.overlay.nativeElement, 'display', 'none');
+    //     this.renderer.setStyle(this.popup.nativeElement, 'display', 'none');
+    //     this.newGame();
+    //   } else {
+    //     if (this.currentQuestion === this.totalQuestions && this.correct) {
+    //       this.renderer.setProperty(this.message.nativeElement, 'innerText', 'You win!');
+    //     } else {
+    //       this.renderer.setProperty(this.message.nativeElement, 'innerText', 'Game Over');
+    //     }
+    //     console.log("popup should show")
+    //     this.renderer.setStyle(this.overlay.nativeElement, 'display', 'block');
+    //     this.renderer.setStyle(this.popup.nativeElement, 'display', 'block');
+    //   }
+    // }
   }
 
   select(id: string) {
     this.selectedArtistId = id;
-  }
-
-  playAudio() {
-    if (this.sound) {
-      this.sound.play();
+    if (this.selectedArtistId === this.correctArtistId) {
+      this.correct = true;
+    } else {
+      this.correct = false;
     }
   }
 
   submitAnswer() {
     if (this.correct) {
-
+      console.log("correct");
     } else {
+      console.log("wrong");
       this.guesses -= 1;
     }
+    this.results();
+  }
+
+  results() {
+    if (this.guesses <= 0) {
+      console.log("lose");
+      // lose popup
+      this.togglePopup();
+    }
+    else if (this.currentQuestion === this.totalQuestions && this.correct) {
+      console.log("win")
+      // win popup
+      this.togglePopup();
+    }
+    else if (this.correct) {
+      this.gameData.updateCurrentQuestion(this.currentQuestion + 1);
+      this.gameData.updateGuesses(this.guesses);
+      this.router.routeReuseStrategy.shouldReuseRoute = function () {
+        return false;
+      }
+      this.router.navigateByUrl('/game');
+    }
+  }
+
+  newGame() {
+    this.router.navigateByUrl('/');
   }
 }
