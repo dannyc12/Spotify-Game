@@ -38,8 +38,15 @@ export class GameComponent implements OnInit {
   constructor(private gameData: GameService, private router: Router, private renderer: Renderer2) { }
 
   ngOnInit(): void {
+    if (!this.gameData.getGameConfiguration().genre) {
+      this.router.navigateByUrl('/');
+    } 
+
     this.gameData.currentQuestion.subscribe(currentQuestion => this.currentQuestion = currentQuestion);
     this.gameData.guesses.subscribe(guesses => this.guesses = guesses);
+    this.genre = this.gameData.getGameConfiguration().genre;
+    this.totalArtistOptions = this.gameData.getGameConfiguration().numberOfArtists;
+    this.totalQuestions = this.gameData.getGameConfiguration().numberOfTracks;
 
     this.authLoading = true;
     const storedTokenString = localStorage.getItem(TOKEN_KEY);
@@ -78,7 +85,6 @@ export class GameComponent implements OnInit {
       if (!newTrack.preview_url) {
         continue;
       }
-      console.log(newTrack.artists)
       this.track = {
         id: newTrack.id,
         name: newTrack.name,
@@ -93,7 +99,6 @@ export class GameComponent implements OnInit {
   };
 
   getArtistOptions = async (t: any) => {
-    console.log(this.track)
     const response = await fetchFromSpotify({
       token: t,
       endpoint: `artists/${this.correctArtistId}`,
@@ -108,7 +113,6 @@ export class GameComponent implements OnInit {
       token: t,
       endpoint: `search?q=genre:${this.genre}&type=artist&limit=50`,
     });
-    console.log(responseTwo);
     while (this.artistOptions.length < this.totalArtistOptions) {
       let option: any = responseTwo.artists.items[Math.floor(Math.random() * responseTwo.artists.items.length)]
       if (!this.artistOptions.some((artist) => artist.id === option.id)) {
@@ -145,7 +149,7 @@ export class GameComponent implements OnInit {
         popup.style.display = 'none';
         this.newGame();
       } else {
-        if (this.currentQuestion === this.totalQuestions && this.correct) {
+        if (this.currentQuestion == this.totalQuestions && this.correct) {
           message.innerText = "You win!"
         } else {
           message.innerText = "Game Over"
@@ -199,11 +203,15 @@ export class GameComponent implements OnInit {
       console.log("lose");
       // lose popup
       this.togglePopup();
+      this.gameData.updateCurrentQuestion(1);
+      this.gameData.updateGuesses(4);
     }
-    else if (this.currentQuestion === this.totalQuestions && this.correct) {
+    else if (this.currentQuestion == this.totalQuestions && this.correct) {
       console.log("win")
       // win popup
       this.togglePopup();
+      this.gameData.updateCurrentQuestion(1);
+      this.gameData.updateGuesses(4);
     }
     else if (this.correct) {
       this.gameData.updateCurrentQuestion(this.currentQuestion + 1);
