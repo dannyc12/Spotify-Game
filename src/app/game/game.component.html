@@ -1,16 +1,22 @@
-<h1>Question #{{ currentQuestion }}</h1>
-<!-- <figure>
-    <button (click)="playAudio()">Play</button>
-</figure> -->
-<ng-container *ngIf="track">
-    <figure>
-        <audio controls [src]="track.previewUrl"></audio>
-    </figure>
-</ng-container>
-<app-artist-card *ngFor="let artist of artistOptions" [artist]="artist" id="{{ artist.id }}" (click)="select(artist.id)" [selectedArtistId]="selectedArtistId"></app-artist-card>
-<br />
-<button (click)="submitAnswer()">Submit Answer</button>
-<p>Guesses remaining: {{ guesses }}</p>
-<app-popup (togglePopupEvent)="togglePopup()"></app-popup>
-
-<!-- <script src="../../../node_modules/howler/src/howler.core.js"></script> -->
+<div class="center-container">
+    <h1>Question #{{ currentQuestion }}</h1>
+    <button (click)="newGame()">New Game</button>
+    <ng-container *ngIf="track">
+        <figure>
+            <audio controls [src]="track.previewUrl"></audio>
+        </figure>
+    </ng-container>
+    <div class="artists-container">
+        <app-artist-card *ngFor="let artist of artistOptions" [artist]="artist" id="{{ artist.id }}" (click)="select(artist.id)" [selectedArtistId]="selectedArtistId"></app-artist-card>
+    </div>
+    <br />
+    <button (click)="submitAnswer()">Submit Answer</button>
+    <div class="wrong" id="wrong">
+        <p>Wrong!</p>
+    </div>
+    <div class="correct" id="correct">
+        <p>Correct!</p>
+    </div>
+    <p>Guesses remaining: {{ guesses }}</p>
+    <app-popup (togglePopupEvent)="togglePopup()"></app-popup>
+</div>
