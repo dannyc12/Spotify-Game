@@ -9,6 +9,14 @@ const AUTH_ENDPOINT =
   "https://nuod0t2zoe.execute-api.us-east-2.amazonaws.com/FT-Classroom/spotify-auth-token";
 const TOKEN_KEY = "whos-who-access-token";
 
+const CLIENT_ID = "79665c75791b47399b6606a26a49704a";
+const CLIENT_SECRET = "4b952512e7d6442abcb61f7b858a3020";
+const GRANT_TYPE = "client_credentials"
+
+const SPOTIFY_ENDPOINT = "https://accounts.spotify.com/api/token"
+const HEADERS = {"Content-Type": "application/x-www-form-urlencoded"}
+const PERSONAL_TOKEN_KEY = ""
+
 @Component({
   selector: "app-home",
   templateUrl: "./home.component.html",
@@ -28,10 +36,29 @@ export class HomeComponent implements OnInit {
 
   trackOptions: number[] = [1,2,3];
 
+  getPersonalSpotifyToken() {
+    console.log('Getting personal spotify token...')
+    const body = new URLSearchParams();
+    body.set('grant_type', GRANT_TYPE);
+    body.set('client_id', CLIENT_ID);
+    body.set('client_secret', CLIENT_SECRET);
+    return request(SPOTIFY_ENDPOINT, {method: 'POST', headers: HEADERS, body: body.toString()}).then(({ access_token, expires_in }) => {
+      const newToken = {
+        value: access_token,
+        expiration: Date.now() + (expires_in - 20) * 1000
+      };
+      console.log("Personal Token: " + newToken.value);
+      localStorage.setItem(PERSONAL_TOKEN_KEY, JSON.stringify(newToken));
+      this.authLoading = false;
+      this.token = newToken.value;
+      this.loadGenres(this.token);
+    });
+  }
+
+
   ngOnInit(): void {
     this.authLoading = true;
-    const storedTokenString = localStorage.getItem(TOKEN_KEY);
-    console.log("game configuration at init: " + JSON.stringify(this.gameService.getGameConfiguration()));
+    const storedTokenString = localStorage.getItem(PERSONAL_TOKEN_KEY);
     if (storedTokenString) {
       console.log("Stored token string: " + storedTokenString)
       const storedToken = JSON.parse(storedTokenString);
@@ -39,21 +66,22 @@ export class HomeComponent implements OnInit {
         console.log("Token found in localstorage");
         this.authLoading = false;
         this.token = storedToken.value;
-        // this.loadGenres(storedToken.value);
+        this.loadGenres(storedToken.value);
         return;
       }
     }
-    console.log("Sending request to AWS endpoint");
-    request(AUTH_ENDPOINT).then(({ access_token, expires_in }) => {
-      const newToken = {
-        value: access_token,
-        expiration: Date.now() + (expires_in - 20) * 1000,
-      };
-      localStorage.setItem(TOKEN_KEY, JSON.stringify(newToken));
-      this.authLoading = false;
-      this.token = newToken.value;
-      this.loadGenres(newToken.value);
-    });
+    this.getPersonalSpotifyToken();
+    // console.log("Sending request to AWS endpoint");
+    // request(AUTH_ENDPOINT).then(({ access_token, expires_in }) => {
+    //   const newToken = {
+    //     value: access_token,
+    //     expiration: Date.now() + (expires_in - 20) * 1000,
+    //   };
+    //   localStorage.setItem(TOKEN_KEY, JSON.stringify(newToken));
+    //   this.authLoading = false;
+    //   this.token = newToken.value;
+    //   this.loadGenres(this.token);
+    // });
   }
 
   loadGenres = async (t: any) => {
@@ -84,7 +112,6 @@ export class HomeComponent implements OnInit {
   setGenre(selectedGenre: string) {
     this.selectedGenre = selectedGenre;
     console.log(this.selectedGenre);
-    console.log(TOKEN_KEY);
   }
 
   setNumberOfTracks(selectedNumber: number) {
