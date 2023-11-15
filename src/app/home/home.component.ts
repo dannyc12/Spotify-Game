@@ -26,6 +26,7 @@ export class HomeComponent implements OnInit {
   constructor(private gameService: GameService, private router: Router) {}
 
   genres: String[] = ["House", "Alternative", "J-Rock", "R&B"];
+  validGenre: boolean = true;
   selectedGenre: String = this.gameService.getGameConfiguration().genre;
   authLoading: boolean = false;
   configLoading: boolean = false;
@@ -95,17 +96,22 @@ export class HomeComponent implements OnInit {
     this.configLoading = false;
   };
 
-  startGame() {
+  async startGame() {
     // save the state before routing to game component
+    this.validGenre = true;
     this.gameService.setGameConfiguration({
       genre: this.selectedGenre,
       numberOfTracks: this.numberOfTracks,
       numberOfArtists: this.numberOfArtists,
       difficulty: this.difficulty
     });
+    await this.checkGenreTracks(PERSONAL_TOKEN_KEY);
+    if (this.validGenre) {
     // user router here to ensure that our state is saved BEFORE we move to the game component
     console.log(`saved state: ${JSON.stringify(this.gameService.getGameConfiguration())}`)
+    console.log('valid genre?: ' + this.validGenre)
     this.router.navigate(['/game']);
+    }
   }
 
   setGenre(selectedGenre: string) {
@@ -126,6 +132,18 @@ export class HomeComponent implements OnInit {
   setDifficulty(selectedDifficulty: string) {
     this.difficulty = selectedDifficulty;
     console.log("User chose difficulty: " + this.difficulty)
+  }
+
+  checkGenreTracks = async(t: any) => {
+    const response = await fetchFromSpotify({
+      token: t,
+      endpoint: `search?q=genre:${this.selectedGenre}&type=track&limit=50`,
+    });
+    console.log('tracks in genre: ' + response.tracks.items.length);
+    if (response.tracks.items.length < this.numberOfTracks) {
+      this.validGenre = false;
+    }
+
   }
   
 }

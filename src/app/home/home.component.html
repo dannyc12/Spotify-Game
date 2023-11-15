@@ -17,6 +17,7 @@
         </option>
       </select>
     </div>
+    <span class="error" *ngIf="!validGenre">The genre you chose does not have enough tracks. Please choose another genre.</span>
 
     <div class="select-container">
       <label class="select-label" for="numTracks">Select Number of Tracks</label>
