@@ -91,7 +91,6 @@ export class HomeComponent implements OnInit {
       token: t,
       endpoint: "recommendations/available-genre-seeds",
     });
-    console.log(response);
     this.genres = response.genres;
     this.configLoading = false;
   };
@@ -128,26 +127,5 @@ export class HomeComponent implements OnInit {
     this.difficulty = selectedDifficulty;
     console.log("User chose difficulty: " + this.difficulty)
   }
-
-  // NEEDS TESTING
-  mapResponseToTracks(trackResponse: any): Track {
-    let TrackArtist: Artist = {
-      id: trackResponse.artists[0].id,
-      name: trackResponse.artists[0].name,
-      imgUrl: trackResponse.artists[0].images[0].url
-    }
-    let newTrack: Track = {
-      id: trackResponse.id,
-      name: trackResponse.name,
-      // artists: [TrackArtist],
-      previewUrl: trackResponse.preview_url,
-      detailsUrl: trackResponse.href
-    }
-    for (let key in newTrack) {
-      console.log(`${key}: ${key.valueOf}`)
-    }
-    return newTrack;
-  }
-
   
 }
