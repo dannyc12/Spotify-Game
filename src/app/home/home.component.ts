@@ -105,7 +105,7 @@ export class HomeComponent implements OnInit {
       numberOfArtists: this.numberOfArtists,
       difficulty: this.difficulty
     });
-    await this.checkGenreTracks(PERSONAL_TOKEN_KEY);
+    await this.checkGenreTracks(this.token);
     if (this.validGenre) {
     // user router here to ensure that our state is saved BEFORE we move to the game component
     console.log(`saved state: ${JSON.stringify(this.gameService.getGameConfiguration())}`)
