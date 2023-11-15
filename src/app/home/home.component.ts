@@ -14,7 +14,7 @@ const CLIENT_SECRET = "4b952512e7d6442abcb61f7b858a3020";
 const GRANT_TYPE = "client_credentials"
 
 const SPOTIFY_ENDPOINT = "https://accounts.spotify.com/api/token"
-const HEADERS = {"Content-Type": "application/x-www-form-urlencoded"}
+const HEADERS = { "Content-Type": "application/x-www-form-urlencoded" }
 const PERSONAL_TOKEN_KEY = ""
 
 @Component({
@@ -23,7 +23,7 @@ const PERSONAL_TOKEN_KEY = ""
   styleUrls: ["./home.component.css"],
 })
 export class HomeComponent implements OnInit {
-  constructor(private gameService: GameService, private router: Router) {}
+  constructor(private gameService: GameService, private router: Router) { }
 
   genres: String[] = ["House", "Alternative", "J-Rock", "R&B"];
   validGenre: boolean = true;
@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit {
   numberOfArtists: number = this.gameService.getGameConfiguration().numberOfArtists;
   difficulty: string = this.gameService.getGameConfiguration().difficulty;
 
-  trackOptions: number[] = [1,2,3];
+  trackOptions: number[] = [1, 2, 3];
 
   getPersonalSpotifyToken() {
     console.log('Getting personal spotify token...')
@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
     body.set('grant_type', GRANT_TYPE);
     body.set('client_id', CLIENT_ID);
     body.set('client_secret', CLIENT_SECRET);
-    return request(SPOTIFY_ENDPOINT, {method: 'POST', headers: HEADERS, body: body.toString()}).then(({ access_token, expires_in }) => {
+    return request(SPOTIFY_ENDPOINT, { method: 'POST', headers: HEADERS, body: body.toString() }).then(({ access_token, expires_in }) => {
       const newToken = {
         value: access_token,
         expiration: Date.now() + (expires_in - 20) * 1000
@@ -99,18 +99,17 @@ export class HomeComponent implements OnInit {
   async startGame() {
     // save the state before routing to game component
     this.validGenre = true;
-    this.gameService.setGameConfiguration({
-      genre: this.selectedGenre,
-      numberOfTracks: this.numberOfTracks,
-      numberOfArtists: this.numberOfArtists,
-      difficulty: this.difficulty
-    });
     await this.checkGenreTracks(this.token);
     if (this.validGenre) {
-    // user router here to ensure that our state is saved BEFORE we move to the game component
-    console.log(`saved state: ${JSON.stringify(this.gameService.getGameConfiguration())}`)
-    console.log('valid genre?: ' + this.validGenre)
-    this.router.navigate(['/game']);
+      this.gameService.setGameConfiguration({
+        genre: this.selectedGenre,
+        numberOfTracks: this.numberOfTracks,
+        numberOfArtists: this.numberOfArtists,
+        difficulty: this.difficulty
+      });
+      console.log(`saved state: ${JSON.stringify(this.gameService.getGameConfiguration())}`)
+      console.log('valid genre?: ' + this.validGenre)
+      this.router.navigate(['/game']);
     }
   }
 
@@ -134,7 +133,7 @@ export class HomeComponent implements OnInit {
     console.log("User chose difficulty: " + this.difficulty)
   }
 
-  checkGenreTracks = async(t: any) => {
+  checkGenreTracks = async (t: any) => {
     const response = await fetchFromSpotify({
       token: t,
       endpoint: `search?q=genre:${this.selectedGenre}&type=track&limit=50`,
@@ -145,5 +144,5 @@ export class HomeComponent implements OnInit {
     }
 
   }
-  
+
 }
