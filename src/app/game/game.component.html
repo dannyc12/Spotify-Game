@@ -4,6 +4,7 @@
     <ng-container *ngIf="track">
         <figure>
             <audio controls [src]="track.previewUrl"></audio>
+            <p *ngIf="difficulty === 'easy'">{{track.name}}</p>
         </figure>
     </ng-container>
     <div class="artists-container">

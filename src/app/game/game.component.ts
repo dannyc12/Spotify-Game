@@ -40,6 +40,7 @@ export class GameComponent implements OnInit {
   totalArtistOptions: number = 3;
   totalQuestions: number = 3;
   genre: string = "rock"
+  difficulty = this.gameData.getGameConfiguration().difficulty;
 
   constructor(private gameData: GameService, private router: Router, private renderer: Renderer2, private confettiService: ConfettiService) { }
 
@@ -155,7 +156,7 @@ export class GameComponent implements OnInit {
         popup.style.display = 'none';
         this.newGame();
       } else {
-        if (this.currentQuestion == this.totalQuestions && this.correct) {
+        if (this.currentQuestion === this.totalQuestions && this.correct) {
           message.innerText = "You win!"
         } else {
           message.innerText = "Game Over"
@@ -216,12 +217,14 @@ export class GameComponent implements OnInit {
   }
 
   results() {
+    console.log("current quesiton: " + this.currentQuestion)
+    console.log("number of questions: " + this.totalQuestions)
     if (this.guesses <= 0) {
       console.log("lose");
       // lose popup
       this.togglePopup();
     }
-    else if (this.currentQuestion == this.totalQuestions && this.correct) {
+    else if (this.currentQuestion === this.totalQuestions && this.correct) {
       console.log("win")
       // win popup
       this.confettiService.popConfetti();

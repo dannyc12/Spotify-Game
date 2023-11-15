@@ -20,9 +20,7 @@
     <div class="block">
       <label for="numTracks">Select Number of Tracks:</label>
       <select [(ngModel)]="numberOfTracks" required name="numTracks" (ngModelChange)="setNumberOfTracks($event)">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
+        <option *ngFor="let option of trackOptions" [ngValue]="option">{{option}}</option>
       </select>
     </div>
 
@@ -32,6 +30,14 @@
         <option value="2">2</option>
         <option value="3">3</option>
         <option value="4">4</option>
+      </select>
+    </div>
+
+    <div class="block">
+      <label for="difficulty">Choose Your Difficulty:</label>
+      <select [(ngModel)]="difficulty" required name="difficulty" (ngModelChange)="setDifficulty($event)">
+        <option value="easy">Easy</option>
+        <option value="hard">Hard</option>
       </select>
     </div>
 
