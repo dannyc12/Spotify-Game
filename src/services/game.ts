@@ -11,6 +11,9 @@ export class GameService {
     private guessesSource = new BehaviorSubject<number>(4);
     guesses = this.guessesSource.asObservable();
 
+    private usedTracksSource = new BehaviorSubject<string[]>([]);
+    usedTracks = this.usedTracksSource.asObservable();
+
     private gameConfiguration: any = {
         selectedGenre: undefined,
         numberOfTracks: 1,
@@ -42,4 +45,7 @@ export class GameService {
         this.guessesSource.next(guesses);
     }
 
+    updateUsedTracks(tracks: string[]) {
+        this.usedTracksSource.next(tracks);
+    }
 }

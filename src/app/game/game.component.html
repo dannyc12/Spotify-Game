@@ -1,23 +1,34 @@
 <div class="center-container">
-    <h1>Question #{{ currentQuestion }}</h1>
-    <button (click)="newGame()">New Game</button>
-    <ng-container *ngIf="track">
-        <figure>
-            <audio controls [src]="track.previewUrl"></audio>
-            <p *ngIf="difficulty === 'easy'">{{track.name}}</p>
-        </figure>
-    </ng-container>
-    <div class="artists-container">
-        <app-artist-card *ngFor="let artist of artistOptions" [artist]="artist" id="{{ artist.id }}" (click)="select(artist.id)" [selectedArtistId]="selectedArtistId"></app-artist-card>
-    </div>
+    <h1>Track #{{ currentQuestion }}</h1>
+    <button class="button" (click)="newGame()">New Game</button>
     <br />
-    <button (click)="submitAnswer()">Submit Answer</button>
-    <div class="wrong" id="wrong">
-        <p>Wrong!</p>
+    <ng-container *ngIf="track">
+        <div class="box-shadow">
+            <figure>
+                <audio controls [src]="track.previewUrl"></audio>
+                <p *ngIf="difficulty === 'easy'">{{track.name}}</p>
+            </figure>
+        </div>
+    </ng-container>
+    <div *ngIf="!gameLoading">
+        <div class="artists-container">
+            <app-artist-card *ngFor="let artist of artistOptions" [artist]="artist" id="{{ artist.id }}" (click)="select(artist.id)" [selectedArtistId]="selectedArtistId"></app-artist-card>
+        </div>
+        <br />
+        <button class="button" (click)="submitAnswer()">Submit Answer</button>
+        <br />
+        <div class="text-box box-shadow">
+            <div class="wrong" id="wrong">
+                <p>Wrong!</p>
+            </div>
+            <div class="correct" id="correct">
+                <p>Correct!</p>
+            </div>
+            <p>Guesses remaining: {{ guesses }}</p>
+        </div>
     </div>
-    <div class="correct" id="correct">
-        <p>Correct!</p>
+    <div *ngIf="gameLoading" class="box-shadow">
+        <p>Loading ...</p>
     </div>
-    <p>Guesses remaining: {{ guesses }}</p>
     <app-popup (togglePopupEvent)="togglePopup()"></app-popup>
 </div>

@@ -41,6 +41,7 @@ export class GameComponent implements OnInit {
   totalQuestions: number = 3;
   genre: string = "rock"
   difficulty = this.gameData.getGameConfiguration().difficulty;
+  usedTracks: string[] = [];
 
   constructor(private gameData: GameService, private router: Router, private renderer: Renderer2, private confettiService: ConfettiService) { }
 
@@ -51,6 +52,7 @@ export class GameComponent implements OnInit {
 
     this.gameData.currentQuestion.subscribe(currentQuestion => this.currentQuestion = currentQuestion);
     this.gameData.guesses.subscribe(guesses => this.guesses = guesses);
+    this.gameData.usedTracks.subscribe(tracks => this.usedTracks = tracks);
     this.genre = this.gameData.getGameConfiguration().genre;
     this.totalArtistOptions = this.gameData.getGameConfiguration().numberOfArtists;
     this.totalQuestions = this.gameData.getGameConfiguration().numberOfTracks;
@@ -89,7 +91,7 @@ export class GameComponent implements OnInit {
         endpoint: `search?q=genre:${this.genre}&type=track&limit=50`,
       });
       let newTrack: any = response.tracks.items[Math.floor(Math.random() * response.tracks.items.length)];
-      if (!newTrack.preview_url) {
+      if (!newTrack.preview_url || this.usedTracks.includes(newTrack.id)) {
         continue;
       }
       this.track = {
@@ -230,9 +232,12 @@ export class GameComponent implements OnInit {
       this.confettiService.popConfetti();
       this.togglePopup();
     }
-    else if (this.correct) {
+    else if (this.correct && this.track) {
       this.gameData.updateCurrentQuestion(this.currentQuestion + 1);
       this.gameData.updateGuesses(this.guesses);
+      this.usedTracks.push(this.track.id);
+      this.gameData.updateUsedTracks(this.usedTracks);
+
       this.router.routeReuseStrategy.shouldReuseRoute = function () {
         return false;
       }
