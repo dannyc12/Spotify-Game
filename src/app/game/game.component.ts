@@ -4,6 +4,7 @@ import Track from '../models/track';
 import Artist from '../models/artist';
 import { Router } from '@angular/router';
 import { GameService } from 'src/services/game';
+import { ConfettiService } from 'src/services/confetti';
 
 const AUTH_ENDPOINT =
   "https://nuod0t2zoe.execute-api.us-east-2.amazonaws.com/FT-Classroom/spotify-auth-token";
@@ -19,10 +20,15 @@ export class GameComponent implements OnInit {
   @ViewChild('overlay', { static: false }) overlay!: ElementRef;
   @ViewChild('popup', { static: false }) popup!: ElementRef;
   @ViewChild('message', { static: false }) message!: ElementRef;
+  
+  @ViewChild('wrong', { static: false }) wrongMessage!: ElementRef;
+  @ViewChild('correct', { static: false }) correctMessage!: ElementRef;
+  
+
 
   @Input() artistOptions: Artist[] = [];
   @Input() track: Track | undefined;
-  @Input() guesses: number = 2;
+  @Input() guesses: number = 4;
   @Input() currentQuestion: number = 1;
 
   authLoading: boolean = false;
@@ -36,7 +42,7 @@ export class GameComponent implements OnInit {
   genre: string = "rock"
   difficulty = this.gameData.getGameConfiguration().difficulty;
 
-  constructor(private gameData: GameService, private router: Router, private renderer: Renderer2) { }
+  constructor(private gameData: GameService, private router: Router, private renderer: Renderer2, private confettiService: ConfettiService) { }
 
   ngOnInit(): void {
     if (!this.gameData.getGameConfiguration().genre) {
@@ -191,9 +197,20 @@ export class GameComponent implements OnInit {
 
   submitAnswer() {
     if (this.correct) {
-      console.log("correct");
+      this.confettiService.popConfetti();
+      const wrongElement = document.getElementById('wrong');
+      if (wrongElement) {
+        wrongElement.style.display = 'none';
+      }
+      const correctElement = document.getElementById('correct');
+      if (correctElement) {
+        correctElement.style.display = 'block';
+      }
     } else {
-      console.log("wrong");
+      const wrongElement = document.getElementById('wrong');
+      if (wrongElement) {
+        wrongElement.style.display = 'block';
+      }
       this.guesses -= 1;
     }
     this.results();
@@ -206,15 +223,12 @@ export class GameComponent implements OnInit {
       console.log("lose");
       // lose popup
       this.togglePopup();
-      this.gameData.updateCurrentQuestion(1);
-      this.gameData.updateGuesses(4);
     }
     else if (this.currentQuestion === this.totalQuestions && this.correct) {
       console.log("win")
       // win popup
+      this.confettiService.popConfetti();
       this.togglePopup();
-      this.gameData.updateCurrentQuestion(1);
-      this.gameData.updateGuesses(4);
     }
     else if (this.correct) {
       this.gameData.updateCurrentQuestion(this.currentQuestion + 1);
@@ -227,6 +241,8 @@ export class GameComponent implements OnInit {
   }
 
   newGame() {
+    this.gameData.updateCurrentQuestion(1);
+    this.gameData.updateGuesses(4);
     this.router.navigateByUrl('/');
   }
 }
