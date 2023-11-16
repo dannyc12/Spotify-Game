@@ -20,15 +20,15 @@ export class GameComponent implements OnInit {
   @ViewChild('overlay', { static: false }) overlay!: ElementRef;
   @ViewChild('popup', { static: false }) popup!: ElementRef;
   @ViewChild('message', { static: false }) message!: ElementRef;
-  
+
   @ViewChild('wrong', { static: false }) wrongMessage!: ElementRef;
   @ViewChild('correct', { static: false }) correctMessage!: ElementRef;
-  
+
 
 
   @Input() artistOptions: Artist[] = [];
   @Input() track: Track | undefined;
-  @Input() guesses: number = 4;
+  @Input() guesses: number = 3;
   @Input() currentQuestion: number = 1;
 
   authLoading: boolean = false;
@@ -42,13 +42,14 @@ export class GameComponent implements OnInit {
   genre: string = "rock"
   difficulty = this.gameData.getGameConfiguration().difficulty;
   usedTracks: string[] = [];
+  wrongAnswers: string[] = [];
 
   constructor(private gameData: GameService, private router: Router, private renderer: Renderer2, private confettiService: ConfettiService) { }
 
   ngOnInit(): void {
     if (!this.gameData.getGameConfiguration().genre) {
       this.router.navigateByUrl('/');
-    } 
+    }
 
     this.gameData.currentQuestion.subscribe(currentQuestion => this.currentQuestion = currentQuestion);
     this.gameData.guesses.subscribe(guesses => this.guesses = guesses);
@@ -210,10 +211,19 @@ export class GameComponent implements OnInit {
       }
     } else {
       const wrongElement = document.getElementById('wrong');
-      if (wrongElement) {
+      const selectedArtist = document.getElementById(`${this.selectedArtistId}`)
+      if (wrongElement && selectedArtist) {
         wrongElement.style.display = 'block';
+        
+        selectedArtist.style.border = '6px solid red';
+        selectedArtist.style.userSelect = 'none';
+        // selectedArtist.style.filter = 'grayscale(100%)';
+        selectedArtist.style.cursor = 'default';
+        // this.confettiService.wrongConfetti();
       }
       this.guesses -= 1;
+      this.wrongAnswers.push(this.selectedArtistId);
+      this.selectedArtistId = "";
     }
     this.results();
   }
@@ -243,7 +253,8 @@ export class GameComponent implements OnInit {
 
   newGame() {
     this.gameData.updateCurrentQuestion(1);
-    this.gameData.updateGuesses(4);
+    this.gameData.updateGuesses(3);
+    this.gameData.updateUsedTracks([]);
     this.router.navigateByUrl('/');
   }
 }
