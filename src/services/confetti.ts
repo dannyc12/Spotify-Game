@@ -7,10 +7,18 @@ declare var confetti: any;
 })
 export class ConfettiService {
   popConfetti() {
+    // Left side confetti
     confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
+      particleCount: 120,
+      spread: 100,
+      origin: { x: 0, y: 0.6 },
+    });
+
+    // Right side confetti
+    confetti({
+      particleCount: 120,
+      spread: 100,
+      origin: { x: 1, y: 0.6 },
     });
   }
 }

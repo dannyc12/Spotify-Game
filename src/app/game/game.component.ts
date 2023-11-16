@@ -219,15 +219,11 @@ export class GameComponent implements OnInit {
   }
 
   results() {
-    console.log("current quesiton: " + this.currentQuestion)
-    console.log("number of questions: " + this.totalQuestions)
     if (this.guesses <= 0) {
-      console.log("lose");
       // lose popup
       this.togglePopup();
     }
     else if (this.currentQuestion === this.totalQuestions && this.correct) {
-      console.log("win")
       // win popup
       this.confettiService.popConfetti();
       this.togglePopup();
