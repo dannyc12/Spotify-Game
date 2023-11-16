@@ -25,7 +25,8 @@ const PERSONAL_TOKEN_KEY = ""
 export class HomeComponent implements OnInit {
   constructor(private gameService: GameService, private router: Router) { }
 
-  genres: String[] = ["House", "Alternative", "J-Rock", "R&B"];
+  genres: String[] = ["House", "Alternative", "J-Rock", "R&B", "accoustic", "anime", "bluegrass", "blues", "chill", "classical", "club",
+                      "country", "death-metal", "disco", "disney", "dubstep", "edm", "folk", "funk", "emo", "gospel", "grunge"];
   validGenre: boolean = true;
   selectedGenre: String = this.gameService.getGameConfiguration().genre;
   authLoading: boolean = false;
@@ -59,7 +60,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.authLoading = true;
-    const storedTokenString = localStorage.getItem(PERSONAL_TOKEN_KEY);
+    const storedTokenString = localStorage.getItem(TOKEN_KEY);
     if (storedTokenString) {
       console.log("Stored token string: " + storedTokenString)
       const storedToken = JSON.parse(storedTokenString);
@@ -92,7 +93,7 @@ export class HomeComponent implements OnInit {
       token: t,
       endpoint: "recommendations/available-genre-seeds",
     });
-    this.genres = response.genres;
+    // console.log(response.genres);
     this.configLoading = false;
   };
 
