@@ -89,12 +89,17 @@ export class HomeComponent implements OnInit {
   loadGenres = async (t: any) => {
     this.configLoading = true;
     console.log("trying to load genres...")
-    const response = await fetchFromSpotify({
-      token: t,
-      endpoint: "recommendations/available-genre-seeds",
-    });
-    // console.log(response.genres);
-    this.configLoading = false;
+    try {
+      const response = await fetchFromSpotify({
+        token: t,
+        endpoint: "recommendations/available-genre-seeds",
+      });
+      this.genres = response.genres;
+    } catch (error) {
+      console.error("Error:", error)
+    } finally {
+      this.configLoading = false;
+    }
   };
 
   async startGame() {

@@ -12,10 +12,10 @@
     </ng-container>
     <div *ngIf="!gameLoading">
         <div class="artists-container">
-            <app-artist-card *ngFor="let artist of artistOptions" [artist]="artist" id="{{ artist.id }}" (click)="select(artist.id)" [selectedArtistId]="selectedArtistId"></app-artist-card>
+            <app-artist-card *ngFor="let artist of artistOptions" [artist]="artist" (click)="wrongAnswers.includes(artist.id) ? null : select(artist.id)" [selectedArtistId]="selectedArtistId"></app-artist-card>
         </div>
         <br />
-        <button class="button" (click)="submitAnswer()">Submit Answer</button>
+        <button class="button" [disabled]="selectedArtistId ? false : true" (click)="submitAnswer()">Submit Answer</button>
         <br />
         <div class="text-box box-shadow">
             <div class="wrong" id="wrong">
