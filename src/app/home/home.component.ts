@@ -60,7 +60,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.authLoading = true;
-    const storedTokenString = localStorage.getItem(TOKEN_KEY);
+    const storedTokenString = localStorage.getItem(PERSONAL_TOKEN_KEY);
     if (storedTokenString) {
       console.log("Stored token string: " + storedTokenString)
       const storedToken = JSON.parse(storedTokenString);
