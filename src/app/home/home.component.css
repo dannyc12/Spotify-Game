@@ -1,69 +1,80 @@
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.block {
+  width: 40%;
+  height: 10vh;
+  margin-bottom: 20px;
+}
+
+select {
+  width: 100%;
+  height: 100%;
+}
+
+.startButton {
+  width: 20%;
+  height: 5vh;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 25px;
+}
+
+.startButton:disabled {
+  background-color: #555;
+  color: white;
+  cursor: default;
+}
+
+.startButton:not(:disabled):hover {
+  background-color: #45a049;
+}
+
+.band {
+  width: 10%;
+}
+
+.select-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.select-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+
+.select-field {
+  width: 300px;
+  padding: 8px;
+  text-align: center;
+  border: 1px solid #ccc;
+  /* Border color for non-focused state */
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s, box-shadow 0.3s;
   }
 
-  .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .block {
-    width: 40%;
-    height: 10vh;
-    margin-bottom: 20px;
-  }
-
-  select {
-    width: 100%;
-    height: 100%;
-  }
-
-  .startButton {
-    width: 20%;
-    height: 5vh;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 25px;
-  }
-
-  .startButton:disabled {
-    background-color: #555;
-    color: white;
-    cursor: default;
-  }
-
-  .startButton:not(:disabled):hover {
-    background-color: #45a049;
-  }
-
-  .band {
-    width: 10%;
-  }
-
-  .select-container {
-    text-align: center;
-    margin-bottom: 20px; 
-  }
-  
-  .select-label {
-    display: block;
-    margin-bottom: 5px; 
-    font-weight: bold; 
-  }
-  
-  
-  .select-field {
-    width: 300px; 
-    padding: 8px; 
-    text-align: center; 
+  .select-field:focus {
+    outline: none; /* Remove default focus outline */
+    border-color: #3498db; /* Border color for focused state */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow when focused */
   }
 
   .error {
