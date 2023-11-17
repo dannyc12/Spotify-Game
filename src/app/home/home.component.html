@@ -7,7 +7,7 @@
     </div>
 
     <div *ngIf="authLoading || configLoading">Loading...</div>
-    <div *ngIf="!authLoading && !configLoading">
+    <div *ngIf="!authLoading && !configLoading" class="container">
       <div class="select-container">
         <label class="select-label" for="genre">Select a Genre</label>
         <select class="select-field" [(ngModel)]="selectedGenre" required (ngModelChange)="setGenre($event)">
