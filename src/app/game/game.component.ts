@@ -135,6 +135,11 @@ export class GameComponent implements OnInit {
     }
 
     this.artistOptions = this.shuffle(this.artistOptions);
+    let audio = document.getElementById("audio") as HTMLAudioElement;
+    // adjust default volume
+    if (audio) {
+      audio.volume = 0.2;
+    }
     this.gameLoading = false;
   }
 
