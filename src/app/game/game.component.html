@@ -5,7 +5,7 @@
     <ng-container *ngIf="track">
         <div class="box-shadow">
             <figure>
-                <audio controls [src]="track.previewUrl"></audio>
+                <audio id="audio" controls [src]="track.previewUrl"></audio>
                 <p *ngIf="difficulty === 'easy'">{{track.name}}</p>
             </figure>
         </div>

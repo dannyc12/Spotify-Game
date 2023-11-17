@@ -1,51 +1,50 @@
 <!-- Make the title part of the header later -->
 <div class="body">
-
   <div class="container">
-    <h1>Who's Who?</h1>
-    <img class="band" src="../../assets/band.svg" alt="band">
-  </div>
-
-  <div *ngIf="authLoading || configLoading">Loading...</div>
-  <div *ngIf="!authLoading && !configLoading" class="container">
-    <div class="select-container">
-      <label class="select-label" for="genre">Select a Genre</label>
-      <select class="select-field" [(ngModel)]="selectedGenre" required (ngModelChange)="setGenre($event)">
-        <option [value]=""></option>
-        <option [value]="genre" *ngFor="let genre of genres">
-          {{ genre }}
-        </option>
-      </select>
-    </div>
-    <span class="error" *ngIf="!validGenre">The genre you chose does not have enough tracks. Please choose another genre.</span>
-
-    <div class="select-container">
-      <label class="select-label" for="numTracks">Select Number of Tracks</label>
-      <select class="select-field" [(ngModel)]="numberOfTracks" required name="numTracks" (ngModelChange)="setNumberOfTracks($event)">
-        <option *ngFor="let option of trackOptions" [ngValue]="option">{{option}}</option>
-      </select>
+    <div class="container">
+      <h1>Who's Who?</h1>
+      <img class="band" src="../../assets/band.svg" alt="band">
     </div>
 
-    <div class="select-container">
-      <label class="select-label" for="numArtists">Select Number of Artists Per Question</label>
-      <select class="select-field" [(ngModel)]="numberOfArtists" required name="numArtists" (ngModelChange)="setNumberOfArtists($event)">
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-      </select>
+    <div *ngIf="authLoading || configLoading">Loading...</div>
+    <div *ngIf="!authLoading && !configLoading">
+      <div class="select-container">
+        <label class="select-label" for="genre">Select a Genre</label>
+        <select class="select-field" [(ngModel)]="selectedGenre" required (ngModelChange)="setGenre($event)">
+          <option [value]=""></option>
+          <option [value]="genre" *ngFor="let genre of genres">
+            {{ genre }}
+          </option>
+        </select>
+      </div>
+      <span class="error" *ngIf="!validGenre">The genre you chose does not have enough tracks. Please choose another genre.</span>
+  
+      <div class="select-container">
+        <label class="select-label" for="numTracks">Select Number of Tracks</label>
+        <select class="select-field" [(ngModel)]="numberOfTracks" required name="numTracks" (ngModelChange)="setNumberOfTracks($event)">
+          <option *ngFor="let option of trackOptions" [ngValue]="option">{{option}}</option>
+        </select>
+      </div>
+  
+      <div class="select-container">
+        <label class="select-label" for="numArtists">Select Number of Artists Per Question</label>
+        <select class="select-field" [(ngModel)]="numberOfArtists" required name="numArtists" (ngModelChange)="setNumberOfArtists($event)">
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+  
+      <div class="select-container">
+        <label class="select-label" for="difficulty">Choose Your Difficulty</label>
+        <select class="select-field" [(ngModel)]="difficulty" required name="difficulty" (ngModelChange)="setDifficulty($event)">
+          <option value="easy">Easy</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
+  
+      <button class="startButton" [disabled]="!(selectedGenre && numberOfTracks && numberOfArtists)"
+                                  (click)="startGame()">Start Game</button>
     </div>
-
-    <div class="select-container">
-      <label class="select-label" for="difficulty">Choose Your Difficulty</label>
-      <select class="select-field" [(ngModel)]="difficulty" required name="difficulty" (ngModelChange)="setDifficulty($event)">
-        <option value="easy">Easy</option>
-        <option value="hard">Hard</option>
-      </select>
-    </div>
-
-    <button class="startButton" [disabled]="!(selectedGenre && numberOfTracks && numberOfArtists)"
-                                (click)="startGame()">Start Game</button>
-
-
   </div>
 </div>
