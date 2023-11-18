@@ -36,7 +36,7 @@ export class HomeComponent implements OnInit {
   numberOfArtists: number = this.gameService.getGameConfiguration().numberOfArtists;
   difficulty: string = this.gameService.getGameConfiguration().difficulty;
 
-  trackOptions: number[] = [1, 2, 3];
+  trackOptions: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   getPersonalSpotifyToken() {
     console.log('Getting personal spotify token...')
